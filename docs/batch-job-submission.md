@@ -135,24 +135,34 @@ apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 
 metadata:
-  name: spark-job-xxxxx
+  name: spark-job-a2fc4e7d
   namespace: default
 
 spec:
-  type: Python
-  mode: cluster
-  sparkVersion: 4.0.1
-
-  mainApplicationFile: local:///opt/spark/app/job.py
-
   driver:
     cores: 2
     memory: 2g
+    volumeMounts:
+      - mountPath: /opt/spark/app
+        name: job-volume
 
   executor:
     cores: 1
-    memory: 1g
     instances: 2
+    memory: 1g
+
+  image: spark:latest
+
+  mainApplicationFile: local:///opt/spark/app/job.py
+
+  mode: cluster
+  sparkVersion: 4.0.1
+  type: Python
+
+  volumes:
+    - configMap:
+        name: spark-job-a2fc4e7d-script
+      name: job-volume
 ```
 
 The CR is generated dynamically using typed API models.
